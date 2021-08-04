@@ -31,7 +31,7 @@ def main():
 
     fpath_default  = "histos/plotsTopEFT.pkl.gz"
     hin1 = get_hist_from_pkl(fpath_default)
-    save_dir = "/afs/crc.nd.edu/user/c/cmoore24/Public/coffea/xcone-coffea/plots"
+    save_dir = "../plots"
     for x in hin1["jets"].axes():
         print(x)
     h = hin1["jets"]
