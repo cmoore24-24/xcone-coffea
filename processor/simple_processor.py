@@ -3,6 +3,7 @@ import coffea
 import numpy as np
 import awkward as ak
 from coffea import hist, processor
+
 import topcoffea.modules.objects as top
 
 
@@ -46,6 +47,7 @@ def isClean(obj_A, obj_B, drmin=0.4):
     return (mask)
 	
 
+
 class AnalysisProcessor(processor.ProcessorABC):
     def __init__(self):
 
@@ -83,6 +85,8 @@ class AnalysisProcessor(processor.ProcessorABC):
         })
 
 
+    
+
     @property
     def accumulator(self):
         return self._accumulator
@@ -110,6 +114,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         e = e[e.isPresElec & e.isLooseElec]
         elecpt = ak.flatten(e.pt)
         elecCount = ak.num(e, axis=1)
+
         print("Total events after electron cut: " + str(ak.count_nonzero(elecCount)))
         
         #Muon tight cut
@@ -123,6 +128,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         #Single Tight Lepton
         singLep = elecCount + muonCount ==1
         print("Total events after electron and muon cut: " + str(ak.count_nonzero(singLep)))
+
 
         j['isClean'] = isClean(j,e,drmin=0.4) & isClean(j,mu,drmin=0.4)
         j = j[j.isClean]
