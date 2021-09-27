@@ -1,2 +1,2 @@
 unset PYTHONPATH
-conda activate coffea-env
+conda activate topcoffea-env
