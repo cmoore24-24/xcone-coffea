@@ -56,6 +56,30 @@ def main():
         print(x)
     h6 = hin1["jet_high_pt"]
 
+    for x in hin1['electron_eta'].axes():
+        print(x)
+    h7 = hin1['electron_eta']
+
+    for x in hin1['electron_phi'].axes():
+        print(x)
+    h8 = hin1['electron_phi']
+
+    for x in hin1['muon_eta'].axes():
+        print(x)
+    h9 = hin1['muon_eta']
+
+    for x in hin1['muon_phi'].axes():
+        print(x)
+    h10 = hin1['muon_phi']
+
+    for x in hin1['jet_counts'].axes():
+        print(x)
+    h11 = hin1['jet_counts']
+
+    for x in hin1['missing_pt'].axes():
+        print(x)
+    h12 = hin1['missing_pt']
+
     fig1, ax1 = plt.subplots(1, 1, figsize=(7,7))
     hist.plot1d(h1)
     ax1.autoscale(axis='y')
@@ -91,5 +115,41 @@ def main():
     ax6.autoscale(axis='y')
     fig6.savefig(os.path.join(save_dir,'xjet_high_pt_histogram'))
     ax6.clear()
+
+    fig7, ax7 = plt.subplots(1, 1, figsize=(7,7))
+    hist.plot1d(h7)
+    ax7.autoscale(axis='y')
+    fig7.savefig(os.path.join(save_dir,'electron_eta_histogram'))
+    ax7.clear()
+
+    fig8, ax8 = plt.subplots(1, 1, figsize=(7,7))
+    hist.plot1d(h8)
+    ax8.autoscale(axis='y')
+    fig8.savefig(os.path.join(save_dir,'electron_phi_histogram'))
+    ax8.clear()
+
+    fig9, ax9 = plt.subplots(1, 1, figsize=(7,7))
+    hist.plot1d(h9)
+    ax9.autoscale(axis='y')
+    fig9.savefig(os.path.join(save_dir,'muon_eta_histogram'))
+    ax9.clear()
+
+    fig10, ax10 = plt.subplots(1, 1, figsize=(7,7))
+    hist.plot1d(h10)
+    ax10.autoscale(axis='y')
+    fig10.savefig(os.path.join(save_dir,'muon_phi_histogram'))
+    ax10.clear()
+
+    fig11, ax11 = plt.subplots(1, 1, figsize=(7,7))
+    hist.plot1d(h11)
+    ax11.autoscale(axis='y')
+    fig11.savefig(os.path.join(save_dir,'jet_counts_histogram'))
+    ax11.clear()
+
+    fig12, ax12 = plt.subplots(1, 1, figsize=(7,7))
+    hist.plot1d(h12)
+    ax12.autoscale(axis='y')
+    fig12.savefig(os.path.join(save_dir,'missing_pt_histogram'))
+    ax12.clear()
 
 main()

@@ -4,7 +4,7 @@ import numpy as np
 import awkward as ak
 from coffea import hist, processor
 
-import topcoffea.modules.objects as top
+#import topcoffea.modules.objects as top
 
 
 #def isTightElec(pt, eta, dxy, dz, miniIso, sip3D, mvaTTH, elecMVA, lostHits, convVeto, tightCharge, sieie, hoe, eInvMinusPInv, minpt=15.0):
@@ -52,7 +52,6 @@ class AnalysisProcessor(processor.ProcessorABC):
     def __init__(self):
 
         # Create the histograms
-        # In general, histograms depend on 'sample', 'channel' (final state) and 'cut' (level of selection)
         self._accumulator = processor.dict_accumulator({
             "events": hist.Hist(
                   "Events",
@@ -82,6 +81,30 @@ class AnalysisProcessor(processor.ProcessorABC):
                   "Events",
                   hist.Cat("sample","XCone Jet high pt"),
                   hist.Bin("jet_high_pt","XCone Jet high pt", 90, 0, 1000)),
+            "electron_eta": hist.Hist(
+                  "Events",
+                  hist.Cat("sample","Electron Eta"),
+                  hist.Bin("electron_eta","Electron Eta",90, -3.5, 3.5)),
+            "muon_eta": hist.Hist(
+		  "Events",
+                  hist.Cat("sample","Muon Eta"),
+                  hist.Bin("muon_eta","Muon Eta", 90, -3.5, 3.5)),
+            "electron_phi": hist.Hist(
+                  "Events",
+                  hist.Cat("sample", "Electron Phi"),
+                  hist.Bin("electron_phi", "Electron Phi", 50, -3.5, 3.5)),
+            "muon_phi": hist.Hist(
+                  "Events",
+                  hist.Cat("sample", "Muon Phi"),
+                  hist.Bin("muon_phi","Muon Phi", 50, -3.5, 3.5)),
+            "missing_pt": hist.Hist(
+                  "Events",
+                  hist.Cat("sample", "Missing Pt"),
+                  hist.Bin("missing_pt", "Missing Pt", 90, 0, 600)),
+            "jet_counts": hist.Hist(
+                  "Events",
+                  hist.Cat("sample", "Jet Count"),
+                  hist.Bin("jet_counts", "Jet Count", 90, 3, 10)),
         })
 
 
@@ -106,6 +129,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         j = events.XConeJet
         j = ak.with_name(j, "PtEtaPhiMLorentzVector")
         mu = events.Muon
+        met = events.MET
         print("Total events: "+ str(ak.num(e, axis=0)))
         
         #Electron tight cut
@@ -113,15 +137,19 @@ class AnalysisProcessor(processor.ProcessorABC):
         e['isLooseElec'] = isLooseElec(e.miniPFRelIso_all, e.sip3d, e.lostHits)
         e = e[e.isPresElec & e.isLooseElec]
         elecpt = ak.flatten(e.pt)
+        eleceta = ak.flatten(e.eta)
+        elecphi = ak.flatten(e.phi)
         elecCount = ak.num(e, axis=1)
 
         print("Total events after electron cut: " + str(ak.count_nonzero(elecCount)))
-        
+  
         #Muon tight cut
         mu['isPresMuon']= isPresMuon(mu.dxy, mu.dz, mu.eta, mu.pt)
         mu['isLooseMuon'] = isLooseMuon(mu.miniPFRelIso_all, mu.sip3d)
         mu = mu[mu.isPresMuon & mu.isLooseMuon]
         muonpt = ak.flatten(mu.pt)
+        muoneta = ak.flatten(mu.eta)
+        muonphi = ak.flatten(mu.phi)
         muonCount = ak.num(mu,axis=1)
         print("Total events after muon cut: " + str(ak.count_nonzero(muonCount)))
         
@@ -137,6 +165,7 @@ class AnalysisProcessor(processor.ProcessorABC):
         j = j[abs(j.eta)<2.5]
         jetCount = ak.num(j,axis=1)
         j = j[jetCount>=4]
+        b = ak.num(j,axis=1)
         print("Total events after single lepton and jetpt cut: " + str(ak.count_nonzero(jetCount>=4)))
         
         #Two loose btags, one medium.
@@ -153,6 +182,9 @@ class AnalysisProcessor(processor.ProcessorABC):
         jeteta = ak.flatten(j.eta)
         jetphi = ak.flatten(j.phi)
         jethighpt = ak.max(j.pt, axis=1)
+
+        met = met[singLep]
+        miss = ak.flatten(met.pt, axis = 0)
 
         # fill Histos
         hout = self.accumulator.identity()
@@ -184,6 +216,30 @@ class AnalysisProcessor(processor.ProcessorABC):
         	sample = dataset,
         	jet_high_pt = jethighpt,
         )
+        hout['muon_eta'].fill(
+                sample =  dataset,
+                muon_eta = muoneta,
+        )
+        hout['muon_phi'].fill(
+                sample = dataset,
+                muon_phi = muonphi,
+        )
+        hout['electron_eta'].fill(
+                sample = dataset,
+                electron_eta = eleceta,
+        )
+        hout['electron_phi'].fill(
+                sample = dataset,
+                electron_phi = elecphi,
+        )
+        hout['jet_counts'].fill(
+                sample = dataset,
+                jet_counts = b,
+        )
+        hout['missing_pt'].fill(
+                sample = dataset,
+                missing_pt = miss,
+        ) 
         return hout
 
     def postprocess(self, accumulator):
