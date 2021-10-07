@@ -14,7 +14,7 @@ from coffea import hist, processor
 from coffea.util import load, save
 from coffea.nanoevents import NanoAODSchema
 
-import proto_processor
+import simple_processor
 from topcoffea.modules import samples
 from topcoffea.modules import fileReader
 
@@ -72,7 +72,7 @@ for i,k in enumerate(samplesdict.keys()):
   if wc_lst != samplesdict[k]['WCnames']:
     raise Exception("Not all of the datasets have the same list of WCs.")
 
-processor_instance = proto_processor.AnalysisProcessor()
+processor_instance = simple_processor.AnalysisProcessor()
 
 # Run the processor and get the output
 tstart = time.time()
